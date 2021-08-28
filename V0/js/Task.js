@@ -1,11 +1,11 @@
 const createTask = (task) => {
-    const container = document.querySelector(".container");
+    const container = document.querySelector(".add-task");
     const Task = ` <section class="task">
                         <input type="checkbox">
                         <span class="completed">${task}</span>
                         <a href="javascript:void(0)" class="material-icons" onclick="deleteTask(event);">delete</a>
                     </section> `;
-    container.insertAdjacentHTML("beforeend", Task);
+    container.insertAdjacentHTML("afterend", Task);
 }
 const deleteTask = (event) => {
     let container = document.querySelector(".container");
@@ -22,7 +22,3 @@ document.querySelector("#add-task").addEventListener("click", (event) => {
         }
     }
 );
-
-function deleteTask(getTask){
-    getTask.closest("li").remove();
-}
