@@ -1,0 +1,47 @@
+body {
+    font-family: 'Roboto Condensed', sans-serif;;
+}
+.container {
+    display: grid;
+    grid-gap: 5px; 
+    grid-template-columns: repeat(1, 500px);
+    justify-content: center;
+    align-content: flex-start; 
+}
+  
+.item {
+    background: rgb(224, 224, 224);
+    padding: 10px;
+    border: 1px solid rgb(148, 148, 148);  
+} 
+
+.item:first-child{
+    text-align: center;
+}
+.item a{
+    float: right;
+    font-size: 18px;
+    padding-left: 10px;
+}
+.item button{
+    margin-left: 15px;
+}
+
+input[type=text] {
+    height: 24px;
+    padding: 4px;
+    width: 400px;
+}
+
+button {
+    height: 36px;
+    padding: 5px;
+} 
+
+a{
+    text-decoration: none;
+}
+
+input:checked + span{
+    text-decoration: line-through;
+}
