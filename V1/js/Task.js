@@ -40,24 +40,27 @@ document.querySelector("#fullscreem").addEventListener("click", (event) =>{
     }
 });
 
+// Copiar en cache el contenido de una tarea en cache
+function copyText(event){
+    let taskText = event.target.parentElement.children[1].textContent
+    navigator.clipboard.writeText(taskText);  
+    return taskText;
+}
+
 // Compartir tarea
-function shareTask(event){
+function shareTask(event){ 
     if (!("share" in navigator)) {
         alert('Web Share API not supported.');
-    return;
-      }
-    
-    navigator.share({
-        title: 'Check mi tarea' + this.copyText(event),
-        text: this.copyText(event),
+        return;
+    }
+    let task = this.copyText(event);
+    navigator.share({ 
+        title: 'Check mi tarea ' + task,
+        text: task,
         url: window.location
     })
     .then(() => console.log('Successful share'))
     .catch(error => console.log('Error sharing:', error));
+    
 }
 
-// Copiar en cache el contenido de una tarea en cache
-function copyText(event){
-    var taskText = event.target.parentElement.children[1].textContent
-    navigator.clipboard.writeText(taskText);  
-}
