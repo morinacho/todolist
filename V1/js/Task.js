@@ -55,7 +55,7 @@ function shareTask(event){
     }
     let task = this.copyText(event);
     navigator.share({ 
-        title: 'Check mi tarea ' + task,
+        title: `Check mi tarea ${task}`,
         text: task,
         url: window.location
     })
