@@ -1,3 +1,4 @@
+// Crear tareas
 const createTask = (task) => {
     const container = document.querySelector(".add-task");
     const Task = ` <section class="task">
@@ -8,17 +9,17 @@ const createTask = (task) => {
                         <a href="javascript:void(0)" class="material-icons" onclick="copyText(event);">content_paste</a>
                     </section> `;
     container.insertAdjacentHTML("afterend", Task);
+    console.log(getPosition());
 }
 document.querySelector("#add-task").addEventListener("click", (event) => {
-        event.preventDefault(); 
-        const task = document.querySelector("#task-name");
+    event.preventDefault(); 
+    const task = document.querySelector("#task-name");
 
-        if(task.value != ""){ 
-            createTask(task.value)
+    if(task.value != ""){ 
+        createTask(task.value)
             task.value = ""; 
-        }
     }
-);
+});
 
 // Eliminar una tarea
 const deleteTask = (event) => {
@@ -58,9 +59,19 @@ function shareTask(event){
         title: `Check mi tarea ${task}`,
         text: task,
         url: window.location
-    })
-    .then(() => console.log('Successful share'))
-    .catch(error => console.log('Error sharing:', error));
-    
+    });
 }
 
+/*
+ * Change v.2
+ */
+// Geolocalizacion  
+
+function getPosition(){
+    if("geolocation" in navigator){
+        navigator.geolocation.getCurrentPosition(success);
+    } 
+}
+function success(position){
+    return "latitud:" + position.coords.latitude + " longitud:" + position.coords.longitude;
+}
