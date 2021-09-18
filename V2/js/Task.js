@@ -17,7 +17,7 @@ const addTask = (task) => {
     const container = document.querySelector(".add-task");
     const Task = ` <section class="task" data-id=${task.id}>
                         <input type="checkbox" ${!task.status ? "checked":""} onclick="updateStatus(event);">
-                        <span contenteditable="true" onfocusout="updateName(event);">${task.name}</span>
+                        <span contenteditable="true" onfocusout="updateName(event);" onkeypress="focusoff(event)";>${task.name}</span>
                         <a href="javascript:void(0)" class="material-icons" onclick="deleteTask(event);">delete</a>
                         <a href="javascript:void(0)" class="material-icons" onclick="shareTask(event);">share</a>
                         <a href="javascript:void(0)" class="material-icons" onclick="copyText(event);">content_paste</a>
@@ -58,7 +58,11 @@ const updateName = (event) =>{
     listTask[index].name = event.target.innerText;
     localstorage.setItem('tasks', JSON.stringify(listTask));
 }
-
+const focusoff = (event) =>{
+    if(event.which == 13) {
+        event.target.blur();
+    }
+}
 // Eliminar una tarea
 const deleteTask = (event) => {
     let container = document.querySelector(".container");
