@@ -1,8 +1,8 @@
 let mainContainer = document.querySelector(".container");
-let localstorage = window.localStorage;
-let listTask = new Array();
-let message = "";
-let task = {
+let localstorage  = window.localStorage;
+let listTask      = new Array();
+let message       = "";
+let task          = {
     id         : 0,
     name       : "",
     status     : true,
@@ -17,7 +17,7 @@ mainContainer.addEventListener("click", (event)=>{
         if(event.target.id == "task-form-button") initTask(event);
         if(event.target.id == "task-fullscreem") fullscreem(event);
         if(event.target.id == "theme-switch") themeSwitch(event);
-        if(event.target.className == "checkbox material-icons") checkBox(event);
+        if(event.target.className == "checkbox material-icons"){checkBox(event); updateStatus(event)};
         if(event.target.className == "delete material-icons") deleteTask(event);
         if(event.target.className == "share material-icons") shareTask(event);
         if(event.target.className == "copyText material-icons") copyText(event);
@@ -44,7 +44,7 @@ const initTask = (event) =>{
 const addTask = (task) => {              
     const container = document.querySelector(".task-add");
     const Task = ` <section class="task-item" data-id=${task.id}>
-                        <span class="checkbox material-icons" data-status=false>check_box_outline_blank</span>
+    <span class="checkbox material-icons" data-status=${!task.status ? "true":"false"}>${!task.status ? "check_box":"check_box_outline_blank"}</span>
                         <input type="checkbox" ${!task.status ? "checked":""} onchange="updateStatus(event);">
                         <span class="task-text" contenteditable="true" onfocusout="updateName(event);" onkeypress="focusoff(event)";>${task.name}</span>
                         <button class="delete material-icons">delete</button>
@@ -58,6 +58,7 @@ const addTask = (task) => {
 const loadTaks = () =>{ 
     listTask = JSON.parse(localStorage.getItem("tasks")) || [];
     listTask.forEach(element => { addTask(element); });
+    console.log(localStorage.getItem("theme"));
         
 }; window.onload = loadTaks();
 
@@ -113,7 +114,8 @@ function checkBox(event){
 
 // Copiar en cache el contenido de una tarea en cache
 function copyText(event){
-    let taskText = event.target.parentElement.children[1].textContent
+    let taskText = event.target.parentElement.children[2].textContent
+    console.log(taskText)
     navigator.clipboard.writeText(taskText);  
     return taskText;
 }
@@ -150,12 +152,14 @@ function setPosition(){
 const themeSwitch = (event)=>{
     if(event.target.textContent == "toggle_on"){
         mainContainer.className = "container light";
-        event.target.textContent = "toggle_off";
+        event.target.textContent = "toggle_off"; 
     }
     else{
         mainContainer.className = "container dark";
         event.target.textContent = "toggle_on";
     }
+    localstorage.setItem('theme', mainContainer.className);
+    
 }
 
 if(window.matchMedia){
@@ -166,7 +170,7 @@ if(window.matchMedia){
     else{
         mainContainer.className = "container light";
         document.querySelector("#theme-switch").textContent = "toggle_off"
-    }
+    } 
 } 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
     if(e.matches){
@@ -176,5 +180,5 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
     else{
         mainContainer.className = "container light";  
         document.querySelector("#theme-switch").textContent = "toggle_off"
-    } 
+    }  
 });
