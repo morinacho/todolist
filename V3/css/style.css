@@ -17,7 +17,9 @@ a {
       -ms-flex-direction: column;
           flex-direction: column;
   font-family: 'Roboto Condensed', sans-serif;
-  min-width: 256px;
+  margin: auto;
+  max-width: 640px;
+  width: 100%;
 }
 
 .container header {
@@ -36,7 +38,8 @@ a {
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  width: 640px;
+  max-width: 640px;
+  width: 100%;
 }
 
 .container header h1 {
@@ -56,7 +59,8 @@ a {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  width: 640px;
+  max-width: 640px;
+  width: 100%;
 }
 
 .container #task-form {

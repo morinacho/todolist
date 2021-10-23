@@ -18,14 +18,17 @@ a{
     display: flex; 
     flex-direction: column; 
     font-family: 'Roboto Condensed', sans-serif;
-    min-width: 256px;
+    margin: auto;
+    max-width: 640px;
+    width:100%;
     & header{
         align-items: center;
         align-self: center;
         display:flex;
         justify-content: center;
         flex-direction: row;    
-        width: 640px;
+        max-width: 640px;
+        width:100%;
         & h1{
             flex-grow: 1;
             font-size: 36px;
@@ -35,7 +38,8 @@ a{
         align-self: center;
         display: flex;
         flex-direction: column;
-        width: 640px;
+        max-width: 640px;
+        width:100%;
     }
     & #task-form{
         display: flex;
