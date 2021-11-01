@@ -1,3 +1,6 @@
+const API_URL     = "http://localhost:3004/api/tasks";
+const container   = document.querySelector(".task-add");
+let withouttask   = document.querySelector('#without-task');
 let mainContainer = document.querySelector(".container");
 let localstorage  = window.localStorage;
 let listTask      = new Array();
@@ -30,19 +33,30 @@ const initTask = (event) =>{
     task.name = document.querySelector("#task-form-input-name").value;
 
     if(task.name != ""){ 
-        setPosition();
-        task.id = (Math.floor(Math.random() * 10001));
-        addTask(task);  
-
-        listTask.push({'id':task.id, 'name':task.name, 'status':task.status});  
+        // Guardo en la api y recupero la id para eliminar o actualizar
+        axios.post(API_URL, {
+            params:{ 
+                title: task.name,
+                status: task.status
+            }
+        })
+        .then(response => {
+            task.id = response.data.body;
+            setPosition();
+            addTask(task);  
+        })
+        .catch(error => console.log(error))
+        
+        //Guardo en el LocalStorage
+        /* listTask.push({'id':task.id, 'name':task.name, 'status':task.status});  
         localstorage.setItem('tasks', JSON.stringify(listTask));
-        document.querySelector("#task-form-input-name").value = "";
+        document.querySelector("#task-form-input-name").value = ""; */
+        withouttask.style.display = "none"
     }
 }
 
 // Agregar tareas
-const addTask = (task) => {              
-    const container = document.querySelector(".task-add");
+const addTask = (task) => {       
     const Task = ` <section class="task-item" data-id=${task.id}>
                         <span class="checkbox material-icons" data-status=${!task.status ? "true":"false"}>${!task.status ? "check_box":"check_box_outline_blank"}</span>
                         <input type="checkbox" ${!task.status ? "checked":""} onchange="updateStatus(event);">
@@ -54,26 +68,66 @@ const addTask = (task) => {
     container.insertAdjacentHTML("afterend", Task);
 };
 
-// Cargar tareas del storage
-const loadTaks = () =>{ 
+
+const loadTaks = () => { 
+    // Cargar tareas del api
+    axios.get(API_URL)
+        .then((response) => {
+            if(response.data.body.length == 0){
+                withouttask.style.display = "inline" 
+            }
+            else{
+                for(const taskDB of response.data.body){
+                    task.id     = taskDB._id;
+                    task.name   = taskDB.params.title;
+                    task.status = taskDB.params.status;
+                    addTask(task);
+                }
+                withouttask.style.display = "none"
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+    });
+
+    /* USO DE LOCALSTORAGE 
     listTask = JSON.parse(localStorage.getItem("tasks")) || [];
-    listTask.forEach(element => { addTask(element); });
-    console.log(localStorage.getItem("theme"));
+    if(listTask.length == 0){
+        withouttask.style.display = "inline" 
+    }
+    else{
+        listTask.forEach(element => { addTask(element); }); 
+        withouttask.style.display = "none"
+    } */
         
 }; window.onload = loadTaks();
 
 // Actualizar estado de tareas
 const updateStatus = (event) =>{
-    index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
+    task.id   = event.target.parentElement.dataset.id
+    task.name = event.target.parentElement.querySelector(".task-text").innerText;
+    task.status = event.target.parentElement.querySelector(".checkbox").dataset.status;
+    console.log(task.status);
+    axios.put(`${API_URL}/${task.id}`, {params:{title:task.name, status:(task.status)}})
+    .then(response => console.log(response.data.message))
+    .catch(error => console.log(error));
+    /* index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
     listTask[index].status = !listTask[index].status; 
-    localstorage.setItem('tasks', JSON.stringify(listTask));
+    localstorage.setItem('tasks', JSON.stringify(listTask)); */
 }
 
 // Actualizar nombre de tarea
 const updateName = (event) =>{
-    index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
+    task.id     = event.target.parentElement.dataset.id;
+    task.name   = event.target.innerText;
+    task.status = event.target.parentElement.querySelector(".checkbox").dataset.status;
+    axios.put(`${API_URL}/${task.id}`, {params:{title:task.name, status:task.status}})
+    .then(response => console.log(response.data.message))
+    .catch(error => console.log(error));
+
+    /* index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
     listTask[index].name = event.target.innerText;
-    localstorage.setItem('tasks', JSON.stringify(listTask));
+    localstorage.setItem('tasks', JSON.stringify(listTask)); */
 }
 const focusoff = (event) => event.which == 13 ? event.target.blur() : null;
 
@@ -81,10 +135,17 @@ const focusoff = (event) => event.which == 13 ? event.target.blur() : null;
 const deleteTask = (event) => {
     let container = document.querySelector("main");
     container.removeChild(event.target.parentElement);
+
+    axios.delete(`${API_URL}/${event.target.parentElement.dataset.id}`)
+    .then((response) =>{
+        console.log(response.data.message)
+    })
+    .catch(error => console.log(error));
+    /*
     index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
- 
+
     listTask.splice(index,1);
-    localstorage.setItem('tasks', JSON.stringify(listTask));
+    localstorage.setItem('tasks', JSON.stringify(listTask));*/
 } 
 
 // Poner en full screen
@@ -98,7 +159,7 @@ const fullscreem = (event) => {
     }
 }
 
-// Simulando chackbox
+// Simulando checkbox
 function checkBox(event){
     if(event.target.dataset.status == "false"){
         event.target.textContent = "check_box";
@@ -114,8 +175,7 @@ function checkBox(event){
 
 // Copiar en cache el contenido de una tarea en cache
 function copyText(event){
-    let taskText = event.target.parentElement.children[2].textContent
-    console.log(taskText)
+    let taskText = event.target.parentElement.children[2].textContent;
     navigator.clipboard.writeText(taskText);  
     return taskText;
 }
