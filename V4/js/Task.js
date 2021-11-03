@@ -8,7 +8,7 @@ let message       = "";
 let task          = {
     id         : 0,
     name       : "",
-    status     : true,
+    status     : false,
     geolocation:{
         latitud : 0,
         longitud: 0
@@ -49,8 +49,8 @@ const initTask = (event) =>{
         
         //Guardo en el LocalStorage
         /* listTask.push({'id':task.id, 'name':task.name, 'status':task.status});  
-        localstorage.setItem('tasks', JSON.stringify(listTask));
-        document.querySelector("#task-form-input-name").value = ""; */
+        localstorage.setItem('tasks', JSON.stringify(listTask));*/ 
+        document.querySelector("#task-form-input-name").value = "";
         withouttask.style.display = "none"
     }
 }
@@ -58,8 +58,8 @@ const initTask = (event) =>{
 // Agregar tareas
 const addTask = (task) => {       
     const Task = ` <section class="task-item" data-id=${task.id}>
-                        <span class="checkbox material-icons" data-status=${!task.status ? "true":"false"}>${!task.status ? "check_box":"check_box_outline_blank"}</span>
-                        <input type="checkbox" ${!task.status ? "checked":""} onchange="updateStatus(event);">
+                        <span class="checkbox material-icons" data-status=${task.status}>${task.status? "check_box":"check_box_outline_blank"}</span>
+                        <input type="checkbox" ${task.status ? "checked":""} onchange="updateStatus(event);">
                         <span class="task-text" contenteditable="true" onfocusout="updateName(event);" onkeypress="focusoff(event)";>${task.name}</span>
                         <button class="delete material-icons">delete</button>
                         <button class="share material-icons">share</button>
@@ -104,11 +104,10 @@ const loadTaks = () => {
 
 // Actualizar estado de tareas
 const updateStatus = (event) =>{
-    task.id   = event.target.parentElement.dataset.id
-    task.name = event.target.parentElement.querySelector(".task-text").innerText;
-    task.status = event.target.parentElement.querySelector(".checkbox").dataset.status;
-    console.log(task.status);
-    axios.put(`${API_URL}/${task.id}`, {params:{title:task.name, status:(task.status)}})
+    task.id     = event.target.parentElement.dataset.id
+    task.name   = event.target.parentElement.querySelector(".task-text").innerText;
+    task.status = !(event.target.parentElement.querySelector(".checkbox").dataset.status === 'true');
+    axios.put(`${API_URL}/${task.id}`, {params:{title:task.name, status:(!task.status)}})
     .then(response => console.log(response.data.message))
     .catch(error => console.log(error));
     /* index = listTask.findIndex(task => task.id == event.target.parentElement.dataset.id);
